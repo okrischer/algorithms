@@ -6,10 +6,10 @@ int step = 0;
 
 void setup() {
   size(1000, 400);
-  hanoi = new Hanoi(4); // max 8 disks for this visualization
+  hanoi = new Hanoi(8); // max 8 disks for this visualization
   hanoi.solve();
   moves = hanoi.moves;
-  frameRate(1);
+  frameRate(8);
 }
 
 void draw() {
