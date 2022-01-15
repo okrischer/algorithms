@@ -1,0 +1,37 @@
+\documentclass{scrartcl}
+\usepackage{mathtools}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[backend=biber,style=authoryear]{biblatex}
+\usepackage[section,newfloat=true]{minted}
+\addbibresource{algs.bib}
+\numberwithin{equation}{section}
+\newtheorem{defn}{Definition}[section]
+\newtheorem{prop}{Proposition}[section]
+\newtheorem{theo}{Theorem}[section]
+\newtheorem{impl}{Implementation}[section]
+\newtheorem{exer}{Exercise}[section]
+
+\begin{document}
+\definecolor{bgh}{rgb}{0.95,0.95,0.96}
+\definecolor{bgj}{rgb}{0.96,0.95,0.95}
+\usemintedstyle[haskell]{lovelace}
+\usemintedstyle[java]{trac}
+\newminted{java}{bgcolor=bgj}
+\newminted{haskell}{bgcolor=bgh,gobble=2}
+
+
+\title{Algorithms Illuminated: The Basics}
+\author{O. Krischer}
+\maketitle
+\begin{abstract}
+   Implementing basic algorithms in both functional style with Haskell and imperative style with Java, working through the book \citetitle{rough18} \footcite{rough18}.
+\end{abstract}
+\tableofcontents
+
+\input{DivConq.tex}
+
+\printbibliography
+
+\end{document}
