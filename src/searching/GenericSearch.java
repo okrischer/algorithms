@@ -1,12 +1,16 @@
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Stack;
 import java.util.Queue;
 import java.util.LinkedList;
-import java.util.Set;
 import java.util.ArrayList;
+import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.ToDoubleFunction;
 
 
 public class GenericSearch {
@@ -14,6 +18,7 @@ public class GenericSearch {
   // for visualization only
   public static Set exploredDFS = new HashSet<>();
   public static Set exploredBFS = new HashSet<>();
+  public static Map exploredAstar = new HashMap<>();
 
   // linear search
   public static <T extends Comparable<T>> boolean ls(List<T> list, T other) {
@@ -91,6 +96,32 @@ public class GenericSearch {
     return null;
   }
 
+  // A* search with heuristic and cost function
+  public static <T> Node<T> astar(T initial, Predicate<T> goalTest,
+                Function<T, List<T>> successors, ToDoubleFunction<T> heuristic) {
+
+    PriorityQueue<Node<T>> frontier = new PriorityQueue<>();
+    frontier.offer(new Node<T>(initial, null, 0.0, heuristic.applyAsDouble(initial)));
+    Map<T, Double> explored = new HashMap<>();
+    exploredAstar = explored; // visualization only
+    explored.put(initial, 0.0);
+
+    while (!frontier.isEmpty()) {
+      Node<T> currentNode = frontier.poll();
+      T currentState = currentNode.state;
+      if (goalTest.test(currentState)) {
+        return currentNode;
+      }
+      for (T next : successors.apply(currentState)) {
+        double newCost = currentNode.cost + 1;
+        if (!explored.containsKey(next) || explored.get(next) > newCost) {
+          explored.put(next, newCost);
+          frontier.offer(new Node<>(next, currentNode, newCost, heuristic.applyAsDouble(next)));
+        }
+      }
+    }
+    return null;
+  }
   // path to goal
   public static <T> List<T> nodeToPath(Node<T> node) {
     List<T> path = new ArrayList<>();

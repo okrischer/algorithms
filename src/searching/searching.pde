@@ -1,15 +1,19 @@
 import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.HashMap;
 
 Maze maze;
 Set exploredDFS = new HashSet<>();
 Set exploredBFS = new HashSet<>();
+Map exploredAstar = new HashMap<>();
+
 int cp;
 boolean paused = true;
 
 void setup() {
-  size(820, 440);
+  size(1240, 440);
   background(200);
   MazeLocation start = new MazeLocation(19, 0);
   MazeLocation goal = new MazeLocation(0, 19);
@@ -41,10 +45,25 @@ void setup() {
     drawBFS();
     maze.clear(path);
   }
+
+  Node<MazeLocation> astar = GenericSearch.astar(maze.start,
+    maze::goalTest, maze::successors, maze::manhattanDistance);
+  exploredAstar = GenericSearch.exploredAstar;
+    
+  if (astar == null) {
+    println("no solution found with A* heuristic");
+  } else {
+    List<MazeLocation> path = GenericSearch.nodeToPath(astar);
+    maze.mark(path);
+    drawASTAR();
+    maze.clear(path);
+  }
+
   fill(0);
   textSize(30);
   text("DepthFirst", 140, 430);
   text("BreadthFirst", 550, 430);
+  text("A* heuristic", 970, 430);
   
   noLoop();
 }
@@ -78,6 +97,21 @@ void drawBFS() {
         setFill(y, x);
       }
       rect(x*cp + 420, y * cp, cp, cp);
+    }
+  }
+}
+
+void drawASTAR() {
+  stroke(0);
+  for (int y = 0; y < maze.rows; y++) {
+    for (int x = 0; x < maze.cols; x++) {
+      MazeLocation ml = new MazeLocation(y, x);
+      if (exploredAstar.containsKey(ml) && maze.grid[y][x].name() == "EMPTY") {
+        fill(100, 200, 250);
+      } else {
+        setFill(y, x);
+      }
+      rect(x*cp + 840, y * cp, cp, cp);
     }
   }
 }

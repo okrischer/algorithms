@@ -15,5 +15,6 @@ _minted-*/
 *.lol
 *.pdf
 *.png
+*.svg
 *.toc
 *.xml

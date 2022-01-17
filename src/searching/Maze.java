@@ -73,6 +73,18 @@ public class Maze {
     return locations;
   }
 
+  public double euclideanDistance(MazeLocation ml) {
+    int xdist = ml.col - goal.col;
+    int ydist = ml.row - goal.row;
+    return Math.sqrt(xdist*xdist + ydist*ydist);
+  }
+
+  public double manhattanDistance(MazeLocation ml) {
+    int xdist = Math.abs(ml.col - goal.col);
+    int ydist = Math.abs(ml.row - goal.row);
+    return(xdist + ydist);
+  }
+  
   public void mark(List<MazeLocation> path) {
     for (var ml : path) {
       grid[ml.row][ml.col] = Cell.PATH;
