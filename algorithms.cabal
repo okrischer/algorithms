@@ -21,7 +21,8 @@ maintainer:         oliver.krischer@gmail.com
 -- category:
 
 library
-    exposed-modules:  DivConq,
+    exposed-modules:  Prereq,
+                      DivConq,
                       Random
 
     -- Modules included in this library but not exported.

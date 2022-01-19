@@ -1,8 +1,9 @@
-\documentclass{scrartcl}
+\documentclass{scrbook}
 \usepackage{mathtools}
 \usepackage{graphicx}
 \usepackage{amssymb}
 \usepackage{amsthm}
+\usepackage{hyperref}
 \usepackage[backend=biber,style=authoryear]{biblatex}
 \usepackage[section,newfloat=true]{minted}
 \addbibresource{algs.bib}
@@ -14,26 +15,33 @@
 \newtheorem{exer}{Exercise}[section]
 
 \begin{document}
+
 \definecolor{bgh}{rgb}{0.95,0.95,0.96}
 \definecolor{bgj}{rgb}{0.96,0.95,0.95}
 \usemintedstyle[haskell]{lovelace}
 \usemintedstyle[java]{trac}
 \newminted{java}{bgcolor=bgj}
 \newminted{haskell}{bgcolor=bgh,gobble=2}
+\hypersetup{hidelinks}
 
-
-\title{Algorithms Illuminated: The Basics}
+\title{Algorithmic Thinking}
 \author{O. Krischer}
+\subtitle{Implementing Basic Algorithms in Both Functional Style with Haskell and Imperative Style with Java.}
+
+\frontmatter
+
 \maketitle
-\begin{abstract}
-   Implementing basic algorithms in both functional style with Haskell and imperative style with Java.
-   The algorithms are collected from several sources like \citetitle{rough18} \footcite{rough18},
-   \citetitle{algsj21} \footcite{algsj21}, \citetitle{algsc98} \footcite{algsc98}, and many others.
-\end{abstract}
 \tableofcontents
 
-\input{DivConq.tex}
+\mainmatter
 
+\input{Prereq.tex}
+\input{DivConq.tex}
+\input{Games.tex}
+
+\appendix 
 \printbibliography
+
+\backmatter
 
 \end{document}

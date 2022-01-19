@@ -16,8 +16,16 @@ mSort :: Ord a => [a] -> [a]
 mSort [] = []
 mSort [x] = [x]
 mSort xs = merge (mSort left) (mSort right)
-    where
-    (left, right) = splitAt (length xs `div` 2) xs
+           where (left, right) = halve xs
+
+{- |
+'halve' is a helper function of 'msort' for dividing a list into two sublists.
+It avoids traversing the input list several times.
+>>> halve [1..9]
+([2,4,6,8],[1,3,5,7,9])
+-}
+halve :: [a] -> ([a], [a])
+halve = foldr op ([], []) where op x (ys, zs) = (zs, x:ys)
 
 -- |The 'merge' subroutine for 'mSort'.
 merge :: Ord a => [a] -> [a] -> [a]

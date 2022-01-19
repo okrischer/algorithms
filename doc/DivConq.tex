@@ -1,30 +1,24 @@
-\section{Divide-and-Conquer}
+\chapter{Divide-and-Conquer}
 
 
-\begin{haskellcode}
-
-> import qualified DivConq as DC
-> import qualified Random as R
-
-\end{haskellcode}
-
-
-\subsection{Merge Sort}
+\section{MergeSort}
 
 \emph{\texttt{MergeSort}} is the canonical example for \emph{Divide-and-Conquer} algorithms.
-These algorithms are typically implemented within two methods:
+These algorithms are typically implemented within two separate procedures:
 \begin{itemize}
-    \item \texttt{master}: the callable method, dividing up the work recursively and collecting the results from the worker method;
-    \item \texttt{worker}: repeatedly invoked helper method, computing the result for a subset of the original problem.
+    \item \textbf{master}: the callable method, dividing up the work recursively and collecting the results from the worker method;
+    \item \textbf{worker}: repeatedly invoked helper method, computing the result for a subset of the original problem.
 \end{itemize}
 
-The main feature of \emph{\texttt{MergeSort}} is that it is a \emph{stable} linear sorting algorithm with a guaranteed runtime complexity of $\Theta (n \lg n)$.
+The main feature of \emph{\texttt{MergeSort}} is that it is a \emph{stable} linear sorting algorithm with a guaranteed runtime of $\Theta (n \lg n)$.
 An algorithm is considered as \emph{stable} if the runtime doesn't change due to the form of input data (ordered, unordered or partially ordered).
 The downside of this appoach is the need of extra space (of size $n$), as no \emph{in-place-update} of the input structure is possible.
+Another minor downside is that \emph{\texttt{MergeSort}} isn't \emph{smooth}, meaning that the algorithm will always take $\Theta (n \lg n)$ steps, even if the input is already sorted.
 
 \begin{impl}[MergeSort with Haskell]
-This implementation uses recursion for both methods, as this is the most natural (and in a pure functional language the only) way to iterate through a data structure.
+This implementation uses recursion for the master and worker method, as this is the most natural (and in a pure functional language the only) way to iterate through a data structure.
 Observe, that there is no need of creating an explicit data structure for merging, as data structures are always build from scratch in a functional language with immutable data.
+Also note the helper function \texttt{halve}, which divides an input list into to halves without traversing the input multiple times, using the built-in higher-order function \texttt{foldr}.
 \end{impl}
 
 \begin{haskellcode}
@@ -32,8 +26,10 @@ Observe, that there is no need of creating an explicit data structure for mergin
   mSort [] = []
   mSort [x] = [x]
   mSort xs = merge (mSort left) (mSort right)
-      where
-      (left, right) = splitAt (length xs `div` 2) xs
+             where (left, right) = halve xs
+
+  halve :: [a] -> ([a], [a])
+  halve = foldr op ([], []) where op x (ys, zs) = (zs, x:ys)
 
   merge :: Ord a => [a] -> [a] -> [a]
   merge [] ys = ys
@@ -45,7 +41,7 @@ Observe, that there is no need of creating an explicit data structure for mergin
 
 \begin{impl}[MergeSort with Java]
 This implementation uses an auxiliary array for merging, which is filled in bitonic order:
-the two subarrays for each recursion step are copied `back-to-back' into this array, such that the left subarray has ascending order, the right one descending.
+the two subarrays for each recursion step are copied `back-to-back' into this array, such that the left subarray has ascending order, the right one descending order\footnote{as suggested in \autocite[chapter 8]{algsc98}}.
 The actual sorting is done by comparing the first with the last element and copying the smaller one back into the original data structure.
 \end{impl}
 
@@ -75,14 +71,19 @@ void merge(int l, int m, int r) {
 Observe that in both implementations the intermediate data structures are exclusively accessed in a sequential style, i.e. there is no need of random acces to an element at any stage of the process.
 This, and the fact that the mandatory extra space is created anyway in a pure functional language makes \emph{\texttt{MergeSort}} a good choise for sorting in a functional setting with immutable data.
 
-\subsection{Qick Sort}
+\subsection{A Functional Excursion on MergeSort}
+    A Test.
+
+
+\section{QickSort}
 
 \emph{\texttt{QuickSort}} is a \emph{Divide-and-Conquer} algorithm as well, althoug it is sometimes referred to as a \emph{partitioning} or \emph{randomized} algorithm.
 The main advantage of \emph{\texttt{QuickSort}} is its simplicity and the omission of an intermediate data structure, as \emph{in-place-update} is possible.
 The main downside is that it is not stable and extra care has to be taken in order to avoid a quadratic running time for already sorted inputs. Its average running time is then $\Theta (n \lg n)$.
 
 \begin{impl}[QuickSort with Haskell] \label{impl:qshaskell}
-We are giving two implementations: the first one to show the simplicity of \texttt{QuickSort}; the second one reduces space complexity from $\Theta (n^2)$ to $\Theta (n)$ by explicitly partitioning the input into two sublists.
+Here are two implementations: the first one shows the simplicity of \texttt{QuickSort} in a functional setting.
+The second version reduces additional space from $\Theta (n^2)$ to $\Theta (n)$ by explicitly partitioning the input into two sublists.
 Observe that no care is taken in either case to choose a good pivot value, as this would lead to extra complexity in a functional setting, not improving the average runtime.
 \end{impl}
 
@@ -105,7 +106,7 @@ Observe that no care is taken in either case to choose a good pivot value, as th
 \begin{impl}[QuickSort with Java]
 In order to avoid a quadratic runtime for already sorted inputs, the master method \texttt{qSort} calls a helper method \texttt{choosePivot} to randomly pick a value from within the given range, and puts this value in the first position.
 The sorting is done in the worker method \texttt{partition}, where the pivot value is always taken from the first element (the randomly choosen element).
-In each partitioning step the current pivot value is copied into its final position by shifting every smaller value to the left, and it is never touched again.
+In each partitioning step the current pivot value is copied into its final position by shifting every smaller value to the left.
 \end{impl}
 
 \begin{javacode}
@@ -138,10 +139,11 @@ int choosePivot(int l, int r) {
 }
 \end{javacode}
 
+\subsection{Comparing QuickSort with MergeSort}
 Comparing \emph{\texttt{QickSort}} with \emph{\texttt{MergeSort}}, we see that they work quite similiar, with one subtle difference:
 in \emph{\texttt{MergeSort}} the master method first calls itself until the input is split into $n$ subsets, and then the worker method merges together the subsets in recursive order.
 
-\emph{\texttt{QickSort}} first calls the worker method and then itself on the resulting subsets.
+\emph{\texttt{QickSort}} however, at first calls the worker method and then itself on the resulting subsets.
 This leads to two observations:
 \begin{itemize}
     \item the chosen pivot value is placed at the correct final position in every turn and is never touched again; therefor the input structure can be used for \emph{in-place-updates} of the resulting subsets for every next turn.
@@ -150,7 +152,9 @@ This leads to two observations:
 
 For these reasons, even if we consider the additional steps of choosing a random value and a small constant factor for not always finding a good pivot, there is still a good chance that \emph{\texttt{QickSort}} will outperform \emph{\texttt{MergeSort}} in an imperative setting.
 
-As we have seen with the the Haskell implementation \ref{impl:qshaskell}, these assumptions do not hold in a functional setting, where we neither can perform \emph{in-place-updates}, nor do we have access to an arbitrary element at constant time. Here, \emph{\texttt{MergeSort}} is likely to be the better alternative; and for small to midsize problems, we can always fall back to \emph{\texttt{InsertionSort}}, which is very fast on linked lists.
+As we have seen with implementation \ref{impl:qshaskell} (\nameref{impl:qshaskell}), these assumptions do not hold in a functional setting, where it is neither possible to perform \emph{in-place-updates}, nor to access an arbitrary element at constant time.
+Here, \emph{\texttt{MergeSort}} is likely to be the better alternative. 
+For small to midsize problems we can always fall back to \emph{\texttt{InsertionSort}}, which is smooth and fast on linked lists (although its running time has an upper bound of $\Theta (n^2)$).
 
 \begin{impl}[InsertionSort with Haskell]
 \end{impl}
@@ -165,16 +169,19 @@ As we have seen with the the Haskell implementation \ref{impl:qshaskell}, these 
                   | otherwise = y : insert x ys
 \end{haskellcode}
 
-\subsection{Counting Inversions}
+\section{Counting Inversions}
 
-\subsection{Strassen's Matrix Multiplication Algorithm}
+\section{Strassen's Matrix Multiplication Algorithm}
 
-\subsection{Closest Pair}
+\section{Closest Pair}
 
-\subsection{Running the Haskell Code}
+\section{Running the Haskell Code}
 
 \begin{haskellcode}
 
+> import qualified DivConq as DC
+> import qualified Random as R
+> 
 > main :: IO ()
 > main = do
 >   let ints = R.randInt 10 42 (0, 100)
