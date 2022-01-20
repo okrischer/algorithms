@@ -14,6 +14,7 @@ Boolean paused = false;
 int[] q = new int[n];
 int[] s = new int[n];
 int[] m = new int[n];
+Random rand = new Random(42);
 Stack<Range> qStack = new Stack<>();
 Stack<int[]> mStack = new Stack<>();
 MergeSort ms = new MergeSort(n);
@@ -23,7 +24,6 @@ void setup() {
   stroke(0);
   textSize(24);
   w = width/n;
-  Random rand = new Random();
   for (int i = 0; i < n; i++) {
     int r = rand.nextInt(400);
     q[i] = r;

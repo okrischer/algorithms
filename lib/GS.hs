@@ -1,4 +1,4 @@
-module Prereq where
+module GS where
 import Data.Char (ord, chr)
 
 type Bit = Char

@@ -4,7 +4,7 @@
 
 \subsection{The Goal of Nim}
 
-In the game of \textbf{nim} you are given a number of rows or heaps, each of them containing a number of items larger than zero. 
+In the \textbf{game of nim} you are given a number of rows or heaps, each of them containing a number of items larger than zero. 
 It is your task to remove one or more items from one row at every move, where two players make their moves in turns.
 There are two versions of the game: the first, in which the player wins, whoever takes the last item from the board, and the other in which the same player looses.
 The gameplay is identical for both variants, so we will stick to the first variant in the course of this example.
@@ -28,6 +28,7 @@ We are going to build the logic for the game \emph{bottom up}, meaning that we b
 \end{haskellcode}
 
 \begin{impl}[Create the board and check game status]
+Note that we create the board as a single list of integers, each representing the number of elements in the corresponding row. The definition of \texttt{finished} doesn't need to include the parameter \texttt{Board} since this parameter is already given in the signature of this function.
 \end{impl}
 \begin{haskellcode}
 
@@ -40,7 +41,7 @@ We are going to build the logic for the game \emph{bottom up}, meaning that we b
 \end{haskellcode}
 
 \begin{impl}[Make valid move]
-A move is specified by a row number and the number of items to be removed, and it's valid if the row contains at least this many items.
+A move is specified by a row number and the number of items to be removed; the move is valid if the row contains at least this many items.
 \end{impl}
 \begin{haskellcode}
 
@@ -171,7 +172,7 @@ Reduce the elements of a row to its \texttt{bitwise-xor} with Nim-Sum:
 
 \end{haskellcode}
 
-\begin{impl}[Adjust the main game loop to allow the computer (player 2) to make its own choice]
+\begin{impl}[Adjust the main game loop to allow the computer to make its own choice]
 \end{impl}
 \begin{haskellcode}
 

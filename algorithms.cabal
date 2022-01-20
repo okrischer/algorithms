@@ -21,7 +21,7 @@ maintainer:         oliver.krischer@gmail.com
 -- category:
 
 library
-    exposed-modules:  Prereq,
+    exposed-modules:  GS,
                       DivConq,
                       Random
 

@@ -45,12 +45,18 @@ Average running time: O(n lg n)
 -}
 qSort :: Ord a => [a] -> [a]
 qSort [] = []
-qSort (x:xs) = pSort xs [] []
-    where
-    pSort [] us vs = qSort us ++ [x] ++ qSort vs
-    pSort (y:xs) us vs = if y < x
-                         then pSort xs (y:us) vs
-                         else pSort xs us (y:vs)
+qSort (x:xs) = qSort ys ++ [x] ++ qSort zs
+    where (ys, zs) = partition (<x) xs
+
+{- |
+'partition is the worker method for 'qSort' and divides an input list into two sublists,
+one with elements matching the predicate, the other with all elements that don't.
+>>> partition (<5) [5,4,8,1,9,3,2,7,6]
+([4,1,3,2],[5,8,9,7,6])
+-}
+partition :: (a -> Bool) -> [a] -> ([a], [a])
+partition p = foldr op ([], [])
+    where op x (ys, zs) = if p x then (x:ys, zs) else (ys, x:zs)
 
 {- |
 'iSort' is a basic implementation of the __/InsertionSort/__ algorithm on lists.
