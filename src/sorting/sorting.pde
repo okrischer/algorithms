@@ -113,7 +113,7 @@ void draw() {
   drawSelection();
   Range range = quickStep();
   drawQuick(range);
-  // if (step % 10 == 0) save("qsAnimation_" + c++ + ".png");
+  //if (step % 10 == 0) save("sortAnimation_" + c++ + ".png");
   mergeStep();
   if (step % 3 == 0) quickStep();
   if (step < n) selectionStep(step++);

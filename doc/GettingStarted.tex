@@ -24,7 +24,7 @@ Thus, its value is calculated like so:
 Trusting for now that this algorithm is valid for any positional numeral system, we can derive a \emph{sum-formula} from it, allowing us to convert a number with any Base $B$ to a decimal number $Z$:
 
 \begin{equation} \label{eq:sum}
-\boxed{Z=\sum_{i=0}^{n-1} Z_i \cdot B^i}
+\boxed{Z=\sum_{i=0}^{n-1} D_i \cdot B^i}
 \end{equation}
 where $Z,B \in \mathbb{N}$, and $Z$ has $n$ places.
 
@@ -36,7 +36,7 @@ proven a very effective way to represent and calculate numbers with a computer.
 
 \begin{impl}[Sum-formula \eqref{eq:sum}]
 As the purpose of this implementation is to outline the idea of the underlying algorithm, we will not use built-in functions for the conversion itself.
-Instead, we will use a list-comprehension and the higher-order function \texttt{iterate} in order to calculate the powers of 2.
+Instead, we use a list-comprehension for multiplying each digit with its weight and the higher-order function \texttt{iterate} in order to calculate the weights as the powers of 2.
 \end{impl}
 
 \begin{haskellcode}

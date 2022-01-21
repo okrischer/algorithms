@@ -1,3 +1,4 @@
+{-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 {- |
 Module      : DivConq
 Description : Basic Algorithms, implementing the __/Divide & Conquer/__ pattern
@@ -21,6 +22,7 @@ mSort xs = merge (mSort left) (mSort right)
 {- |
 'halve' is a helper function of 'msort' for dividing a list into two sublists.
 It avoids traversing the input list several times.
+
 >>> halve [1..9]
 ([2,4,6,8],[1,3,5,7,9])
 -}
@@ -34,6 +36,56 @@ merge xs [] = xs
 merge left@(x:xs) right@(y:ys)
     | x <= y    = x : merge xs right
     | otherwise = y : merge left ys
+
+{- |
+'bumSort' is a basic implementation of the __/Bottom-up MergeSort/__ algorithm on lists.
+Running time: O(n lg n)
+
+>>> bumSort [5,4,8,1,9,3,2,7,6]
+[1,2,3,4,5,6,7,8,9]
+-}
+bumSort :: Ord a => [a] -> [a]
+bumSort [] = []
+bumSort xs = unwrap (until single (pairWith merge) (map wrap xs))
+
+wrap :: a -> [a]
+wrap x = [x]
+
+unwrap :: [a] -> a
+unwrap [x] = x
+
+single :: [a] -> Bool
+single [x]  = True
+single _    = False
+
+-- | 'parWith' is the worker method for __/Bottom-up MergeSort/__
+
+-- | >>> pairWith merge (map wrap [5,4,8,1,9,3,0,2,7,6])
+-- [[4,5],[1,8],[3,9],[0,2],[6,7]]
+pairWith f [] = []
+pairWith f [x] = [x]
+pairWith f (x:y:xs) = f x y:pairWith f xs
+
+
+{- |
+'smoothMS' is a basic implementation of the __/Smooth MergeSort/__ algorithm on lists.
+
+>>> smoothMS [5,4,8,1,9,3,2,7,6]
+[1,2,3,4,5,6,7,8,9]
+-}
+smoothMS :: Ord a => [a] -> [a]
+smoothMS [] = []
+smoothMS xs = unwrap (until single (pairWith merge) (runs xs))
+
+-- | 'runs' is the worker method for __/Smooth MergeSort/__
+
+-- | >>>  runs [5,4,8,1,9,3,2,7,6]
+-- [[5],[4,8],[1,9],[3],[2,7],[6]]
+runs :: Ord a => [a] -> [[a]]
+runs = foldr op []
+    where op x [] = [[x]]
+          op x ((y:xs):xss) | x <= y = (x:y:xs):xss
+                            | otherwise = [x]:(y:xs):xss
 
 
 {- |
@@ -51,6 +103,7 @@ qSort (x:xs) = qSort ys ++ [x] ++ qSort zs
 {- |
 'partition is the worker method for 'qSort' and divides an input list into two sublists,
 one with elements matching the predicate, the other with all elements that don't.
+
 >>> partition (<5) [5,4,8,1,9,3,2,7,6]
 ([4,1,3,2],[5,8,9,7,6])
 -}

@@ -38,9 +38,6 @@ library
 executable algorithms
     main-is:          Main.lhs
 
-    -- Modules included in this executable, other than Main.
-    -- other-modules:
-
     -- LANGUAGE extensions used by modules in this package.
     -- other-extensions:
     build-depends:
@@ -48,6 +45,20 @@ executable algorithms
         diagrams-lib,
         diagrams-svg,
         colour,
+        criterion,
+        algorithms
+
+    hs-source-dirs:   src
+    default-language: Haskell2010
+
+executable benchmark
+    main-is:          Benchmark.hs
+
+    -- LANGUAGE extensions used by modules in this package.
+    -- other-extensions:
+    build-depends:
+        base ^>=4.14.3.0,
+        criterion,
         algorithms
 
     hs-source-dirs:   src

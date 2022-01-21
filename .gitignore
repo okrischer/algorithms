@@ -1,7 +1,9 @@
 .vscode/
 dist-newstyle/
-Main.lhs
+bench/
+img/
 _minted-*/
+Main.lhs
 *.aux
 *.bbl
 *.bcf
@@ -15,7 +17,6 @@ _minted-*/
 *.lol
 *.out
 *.pdf
-*.png
-*.svg
+*.snippets
 *.toc
 *.xml
