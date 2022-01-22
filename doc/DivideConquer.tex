@@ -23,12 +23,10 @@ Before going into details of actual implementations, let us first define some de
 
 We will see that a combination of these qualities for a distinct algorithm is often not easy to accomplish; especially the \emph{compactness} of an algorithm is diffucult to achieve in a pure functional setting.
 
-\section{Binary Search}
-
 \section{MergeSort}
 
 \emph{MergeSort} is a stable and fast sorting algorithm with a guaranteed runtime of $\Theta (n \lg n)$.
-Compared to linear sorting algorithms like \emph{SelectionSort} and \emph{InsertionSort}, which share runtime of $\Theta (n^2)$, this means a huge performance advantage, as $\lg n$ grows much slower than $n$ itself for increasing input sizes.  
+Compared to linear sorting algorithms like \emph{SelectionSort} and \emph{InsertionSort}, which share runtime of $\Theta (n^2)$ this means a huge performance advantage, as $\lg n$ grows much slower than $n$ itself for increasing input sizes.  
 The downside of \emph{MergeSort} is the need of extra space (of size $n$), as no \emph{in-place-update} of the input structure is possible. So it is not compact. Likewise, \emph{MergeSort} isn't smooth, meaning that the algorithm will always take $\Theta (n \lg n)$ steps, even if the input is already sorted.
 
 \begin{impl}[MergeSort with Haskell] \label{impl:mshaskell}
@@ -38,21 +36,21 @@ Also note the helper function \texttt{halve}, which divides an input list into t
 \end{impl}
 
 \begin{haskellcode}
-  mSort :: Ord a => [a] -> [a]
-  mSort [] = []
-  mSort [x] = [x]
-  mSort xs = merge (mSort left) (mSort right)
-             where (left, right) = halve xs
+mSort :: Ord a => [a] -> [a]
+mSort [] = []
+mSort [x] = [x]
+mSort xs = merge (mSort left) (mSort right)
+           where (left, right) = halve xs
 
-  halve :: [a] -> ([a], [a])
-  halve = foldr op ([], []) where op x (ys, zs) = (zs, x:ys)
+halve :: [a] -> ([a], [a])
+halve = foldr op ([], []) where op x (ys, zs) = (zs, x:ys)
 
-  merge :: Ord a => [a] -> [a] -> [a]
-  merge [] ys = ys
-  merge xs [] = xs
-  merge left@(x:xs) right@(y:ys)
-      | x <= y    = x : merge xs right
-      | otherwise = y : merge left ys
+merge :: Ord a => [a] -> [a] -> [a]
+merge [] ys = ys
+merge xs [] = xs
+merge left@(x:xs) right@(y:ys)
+    | x <= y    = x : merge xs right
+    | otherwise = y : merge left ys
 \end{haskellcode}
 
 \begin{impl}[MergeSort with Java] 
@@ -62,15 +60,15 @@ The actual sorting is done by comparing the first with the last element and copy
 \end{impl}
 
 \begin{javacode}
-void mSort(int l, int r) {
+void mSort(int[] a, int l, int r) {
     int m = (r+l) / 2; // dividing input in two halves
     if (l >= r) return; // already sorted
-    mSort(l, m);
-    mSort(m+1, r);
-    merge(l, m, r); // sort by merging
+    mSort(a, l, m);
+    mSort(a, m+1, r);
+    merge(a, l, m, r); // sort by merging
 }
 
-void merge(int l, int m, int r) {
+void merge(int[] a, int l, int m, int r) {
     int i, j;
     // copy the left half to aux
     for (i = m+1; i > l; i--) aux[i-1] = a[i-1];
@@ -94,11 +92,11 @@ Our basic implementation \ref{impl:mshaskell} (\nameref{impl:mshaskell}) is fast
 This definition makes the algorithm unstable, as the order of the input elements is altered before sorting.
 We could replace this definition with {\mintinline{haskell}{halve xs = (take m xs, drop m xs) where m = length xs div 2}}, and this would make the algorithm stable but also slower at the same time, as this definition has to iterate three times over the input list.
 
-In particular, we will explore \emph{Bottom-up MergeSort}, which switches from the \emph{\textbf{divide-and-conquer}} scheme to a \emph{\textbf{bottom-up scheme}}, providing a fast and stable implementation.
+In particular, we will explore \emph{Bottom-up MergeSort}, which switches from the \emph{\textbf{divide-and-conquer}} strategy to a \emph{\textbf{bottom-up}} strategy, providing a fast and stable implementation.
 Here we also have a \emph{main} and a \emph{worker} function, but now \emph{main} doesn't divide up the work recursively; instead it's merely a wrapper-function for calling the \emph{worker} with the correct arguments.
 All the heavy work is done in the \emph{worker} function, which processes the whole input set at once, iterating over the input until the sorted list is produced.
 
-Finally, we will take a look at \emph{Smooth MergeSort}, a variant of Bottom-up with multiple runs, which (as its name suggests) is smooth as well\footnote{both examples are taken from \autocite[section 5.2]{adwh20}}.
+Finally, we will take a look at \emph{Smooth MergeSort}, a variant of bottom-up with multiple runs, which (as its name suggests) is smooth as well\footnote{both examples are taken from \autocite[section 5.2]{adwh20}}.
 
 \begin{impl}[Bottom-up MergeSort with Haskell]
 The main function is \texttt{bumSort}, which calls the worker function \texttt{pairWith} with the correct parameters, thereby applying the helper functions \texttt{wrap, unwrap} and \texttt{single} for wrapping and unwrapping elements from the input.
@@ -106,19 +104,19 @@ Note that \texttt{bumSort} also uses the \texttt{merge} worker function from the
 \end{impl}
 
 \begin{haskellcode}
-  bumSort :: Ord a => [a] -> [a]
-  bumSort [] = []
-  bumSort xs = unwrap (until single (pairWith merge) (map wrap xs))
+bumSort :: Ord a => [a] -> [a]
+bumSort [] = []
+bumSort xs = unwrap (until single (pairWith merge) (map wrap xs))
 
-  pairWith f [] = []
-  pairWith f [x] = [x]
-  pairWith f (x:y:xs) = f x y:pairWith f xs
+pairWith f [] = []
+pairWith f [x] = [x]
+pairWith f (x:y:xs) = f x y:pairWith f xs
 
-  wrap x = [x]
-  unwrap [x] = x
+wrap x = [x]
+unwrap [x] = x
 
-  single [x]  = True
-  single _    = False
+single [x]  = True
+single _    = False
 \end{haskellcode}
 
 Instead of giving a mathematical reasoning for \texttt{pairWith}, we will just demonstrate how it works on a given input of \texttt{[5,4,8,1,9,3,0,2,7,6]}:
@@ -142,19 +140,19 @@ Every next element is added to the front of the current run if it is samller or 
 \end{impl}
 
 \begin{haskellcode}
-  smoothMS :: Ord a => [a] -> [a]
-  smoothMS [] = []
-  smoothMS xs = unwrap (until single (pairWith merge) (runs xs))
+smoothMS :: Ord a => [a] -> [a]
+smoothMS [] = []
+smoothMS xs = unwrap (until single (pairWith merge) (runs xs))
 
-  runs :: Ord a => [a] -> [[a]]
-  runs = foldr op []
-      where op x [] = [[x]]
-            op x ((y:xs):xss) | x <= y = (x:y:xs):xss
-                              | otherwise = [x]:(y:xs):xss
+runs :: Ord a => [a] -> [[a]]
+runs = foldr op []
+    where op x [] = [[x]]
+          op x ((y:xs):xss) | x <= y = (x:y:xs):xss
+                            | otherwise = [x]:(y:xs):xss
 \end{haskellcode}
 
 Instead of starting a new run for every pair of lists, the \texttt{runs} function only starts a new run if an element is greater than its successor.
-Therefore this implementation is not only fast and stable, but also smooth; in particular, if the input is already sorted, it needs only $\Theta(n)$ comparisons to return the input untouched.
+Therefore this implementation is not only fast and stable, but also smooth. In particular, if the input is already sorted, it needs only $\Theta(n)$ comparisons to return the input untouched.
 
 \section{QickSort}
 
@@ -174,14 +172,14 @@ Observe that no care is taken to choose a good pivot value, as this would lead t
 \end{impl}
 
 \begin{haskellcode}
-  qSort :: Ord a => [a] -> [a]
-  qSort [] = []
-  qSort (x:xs) = qSort ys ++ [x] ++ qSort zs
-      where (ys, zs) = partition (<x) xs
+qSort :: Ord a => [a] -> [a]
+qSort [] = []
+qSort (x:xs) = qSort ys ++ [x] ++ qSort zs
+    where (ys, zs) = partition (<x) xs
 
-  partition :: (a -> Bool) -> [a] -> ([a], [a])
-  partition p = foldr op ([], [])
-      where op x (ys, zs) = if p x then (x:ys, zs) else (ys, x:zs)
+partition :: (a -> Bool) -> [a] -> ([a], [a])
+partition p = foldr op ([], [])
+    where op x (ys, zs) = if p x then (x:ys, zs) else (ys, x:zs)
 \end{haskellcode}
 
 \begin{impl}[QuickSort with Java]
@@ -191,26 +189,26 @@ In each partitioning step the current pivot value is copied into its final posit
 \end{impl}
 
 \begin{javacode}
-void qSort(int l, int r) {
+void qSort(int[] a, int l, int r) {
     if (l >= r) return; // already sorted
     int i = choosePivot(l, r);
-    swap(l, i); // make chosen pivot the first element
-    int p = partition(l, r); // new pivot position
-    qSort(l, p-1);
-    qSort(p+1, r);
+    swap(a, l, i); // make chosen pivot the first element
+    int p = partition(a, l, r); // new pivot position
+    qSort(a, l, p-1);
+    qSort(a, p+1, r);
 }
 
-int partition(int l, int r) {
+int partition(int[] a, int l, int r) {
     int p = a[l]; // the pivot value (first element)
-    swap(l, r); // bring pivot to safety on the far right
+    swap(a, l, r); // bring pivot to safety on the far right
     int j = l; // inserting position
     for (int i = l; i < r; i++) { // loop, not including the pivot
         if (a[i] < p) {
-            swap(i, j); // sorting: shift element to the left
+            swap(a, i, j); // sorting: shift element to the left
             j++; // shift inserting position one step to the right
         }
     }
-    swap(j, r); // place pivot correctly
+    swap(a, j, r); // place pivot correctly
     return j;
 }
 
@@ -238,7 +236,6 @@ This leads to two observations:
     \item the number of steps in the inner loop (worker method \emph{partition}) is less than the number of steps in the inner loop of \emph{MergeSort} (worker method \emph{merge}), where the elements have to be copied into an auxiliary structure and from there back to the original structure.
 \end{itemize}
 
-
 For these reasons, even if we consider the additional steps of choosing a random value and a small constant factor for not always finding a good pivot, there is still a good chance that \emph{QickSort} will outperform \emph{MergeSort} in an imperative setting.
 
 As we have seen with implementation \ref{impl:qshaskell} (\nameref{impl:qshaskell}), these assumptions do not hold in a functional setting: neither is it possible to perform \emph{in-place-updates} nor can we access an arbitrary element at constant time.
@@ -249,13 +246,13 @@ And for small to midsize problems we can always fall back to \emph{InsertionSort
 \end{impl}
 
 \begin{haskellcode}
-  iSort :: Ord a => [a] -> [a]
-  iSort = foldr insert []
+iSort :: Ord a => [a] -> [a]
+iSort = foldr insert []
 
-  insert :: Ord a => a -> [a] -> [a]
-  insert x [] = [x]
-  insert x (y:ys) | x <= y = x:y:ys
-                  | otherwise = y : insert x ys
+insert :: Ord a => a -> [a] -> [a]
+insert x [] = [x]
+insert x (y:ys) | x <= y = x:y:ys
+                | otherwise = y : insert x ys
 \end{haskellcode}
 
 Now let's have a look at the grapes of our labour.
@@ -269,6 +266,100 @@ Our simple \emph{InsertionSort} is the fastest on the small set and even on the 
 \includegraphics[width=1.0\textwidth]{../img/bench_sort.png}
 \caption[Sorting benchmarks]{Benchmarking our sorting algorithms}
 \end{figure}
+
+\section{HeapSort}
+
+In this section we are going to use a data structure called \emph{heap} for sorting. We will start with a functional perspective, and then switch to an imperative perspective to show the fundamental differences between both.
+
+\subsection{Functional HeapSort}
+
+\begin{defn}[Heap]
+As \textbf{heap} is a size-balanced binary tree in which the value at a node is no larger than the values in eihter of its subtrees.
+\end{defn}
+
+Thus, flattening a heap produces a list in nondeceasing (not strictly ascending) order.
+The idea is now to create a heap-ordered tree from a list and then flatten the tree in order to obtain a sorted list.
+
+\begin{impl}[HeapSort with Haskell]
+In this version of \texttt{HeapSort} we are defining a main function \texttt{mkheap}, which calls itself on a splitted input.
+The worker function \texttt{split} splits the input into three components: a single Node (wich is the smallest element of the list) and two sublists of equal length.
+\texttt{split} is inherently reccursive, but uses the function \texttt{foldr} to iterate over the input at once.
+\end{impl}
+
+\begin{haskellcode}
+data Tree a = Null | Node a (Tree a) (Tree a)
+
+mkheap :: Ord a => [a] -> Tree a
+mkheap [] = Null
+mkheap (x:xs) = Node y (mkheap ys) (mkheap zs)
+    where (y, ys, zs) = split(x:xs)
+
+split :: Ord a => [a] -> (a, [a], [a])
+split (x:xs) = foldr op (x, [], []) xs
+    where op x (y, ys, zs) | x <= y    = (x, y:zs, ys)
+                           | otherwise = (y, x:zs, ys)
+
+flatten :: Ord a => Tree a -> [a]
+flatten Null = []
+flatten (Node x u v) = x:merge (flatten u) (flatten v)
+
+hSort :: Ord a => [a] -> [a]
+hSort = flatten . mkheap
+\end{haskellcode}
+
+The function \texttt(flatten) is comparable to our basic \emph{MergeSort} implementation; it has a running time of $\Theta(n \lg n)$.
+But \texttt{mkheap} has also a \emph{linearithmic} running time, so joining these two fuctions for \texttt{heapsort} is certainly slower than \emph{MergeSort}.
+However, it is possible to build a \emph{heap} in linear time by building a size-balanced tree with $\Theta(n)$ steps at first and then \emph{heapify} that tree with $\Theta(n)$ steps as well.
+We will not proceed on that idea here, because even then \texttt{hSort} will not be as fast as \emph{MergeSort} in a functional setting.
+On the other hand, heaps are useful for other purposes like the implemenation of \emph{Priority Queues}, a topic we will take up in a later chapter.
+
+\subsection{Imperative HeapSort}
+
+The reason why we have split the section on \emph{HeapSort} into two separate subsections is simply that \emph{heaps} in an imperative setting are represented fundamentally different in respect to a functional setting.
+Sarting with the definition\footnote{as taken from \autocite[section 9.2][]{algsc98}} of a \emph{heap}, we see that heaps do not have to be stored as trees:
+
+\begin{defn}[Heap]
+A \textbf{heap} is a set of nodes with keys arranged in a complete heap-ordered binary tree, represented as an array.
+\end{defn}
+
+\begin{defn}[Heap-ordering]
+A tree is \textbf{heap-ordered} if the key in each node is larger than or equal to the keys in all of that node's children.
+\end{defn}
+
+Note, that this ordering is opposite to the ordering in a functional setting.
+We could also use a linked representation for heap-ordered structures, but complete trees provide us with the opportunity to use a compact arrary representation where we can easily get from a note to its parent and children without needing to maintain links.
+The parent of the node in position $i$ is in position $\lfloor i/2 \rfloor$ and, conversely, its children are in position $2i$ and $2i+1$.
+This arrangement makes traversal of such a structure even easier than if the data were implemented with an actual tree.
+Additionally, this representation gives us access to every element in constant time, wherase we would need $\Theta(\lg n)$ steps for that in a tree structure.
+
+\begin{impl}[HeapSort with Java]
+The main function \texttt{hSort} first constructs the heap within its for-loop; the while-loop exchanges the largest element with the final element in the array and restores the heap, continuing until the heap is empty.
+\texttt{heapify} moves down the heap, exchanging the node at position k with the larger of that node's two children if necessary and stopping when the node at k is not smaller than either child or the bottom is reached.
+This impementation is fast with $\Theta(n \lg n)$ steps and compact, since we are using in-place-updates, restoring the heap-ordering within the input array. But it's not stable nor smooth.
+\end{impl}
+
+\begin{javacode}
+public void hSort(int[] a, int r) {
+    for (int k = r/2; k >= 0; k--)
+        heapify(a, k, r);
+    while (r > 0) {
+        swap(a, 0, r);
+        heapify(a, 0, --r);
+    }
+}
+
+void heapify(int[] a, int k, int r) {
+    int j;
+    while (2*k <= r) {
+        j = 2*k;
+        if (j < r && a[j] < a[j+1]) j++;
+        if (a[k] >= a[j]) break;
+        swap(a, k, j);
+        k = j;
+    }
+}
+\end{javacode}
+
 
 \section{Counting Inversions}
 
@@ -291,5 +382,6 @@ Our simple \emph{InsertionSort} is the fastest on the small set and even on the 
 >   print $ DC.smoothMS ints
 >   print $ DC.qSort ints
 >   print $ DC.iSort ints
+>   print $ DC.hSort ints
 
 \end{haskellcode}

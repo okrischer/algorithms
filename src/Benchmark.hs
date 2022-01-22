@@ -10,13 +10,13 @@ main = do
 
   defaultMain [
     bgroup "small"  [ bench "List.sort" $ whnf sort        small
-                    , bench "iSort"     $ whnf DC.iSort    small
-                    , bench "qSort"     $ whnf DC.qSort    small
+                    , bench "insertion" $ whnf DC.iSort    small
+                    , bench "quick"     $ whnf DC.qSort    small
                     , bench "smoothMS"  $ whnf DC.smoothMS small
                     ],
     bgroup "large"  [ bench "List.sort" $ whnf sort        large
-                    , bench "iSort"     $ whnf DC.iSort    large
-                    , bench "qSort"     $ whnf DC.qSort    large
+                    , bench "insertion" $ whnf DC.iSort    large
+                    , bench "quick"     $ whnf DC.qSort    large
                     , bench "smoothMS"  $ whnf DC.smoothMS large
                     ]
     ]

@@ -126,3 +126,36 @@ insert :: Ord a => a -> [a] -> [a]
 insert x [] = [x]
 insert x (y:ys) | x <= y = x:y:ys
                 | otherwise = y : insert x ys
+
+-- |Definition of a __/Heap/__ as a binary tree with Nodes on top of subtrees
+data Tree a = Null | Node a (Tree a) (Tree a)
+    deriving Show
+
+-- |'mkheap' creates a size-balanced binary tree in form of a __/Heap/__
+-- in linearithmic time: O(n lg n)
+-- >>> mkheap [5,4,8,1,9,3,2,7,6]
+-- Node 1 (Node 2 (Node 3 (Node 7 Null Null) Null) (Node 4 Null Null)) (Node 5 (Node 8 (Node 9 Null Null) Null) (Node 6 Null Null))
+mkheap :: Ord a => [a] -> Tree a
+mkheap [] = Null
+mkheap (x:xs) = Node y (mkheap ys) (mkheap zs)
+    where (y, ys, zs) = split(x:xs)
+
+-- |'split' is a helper function for 'mkheap', which splits a list into a Node label
+-- (which is the smallest element in the input) and two sublists
+-- >>> split [5,4,8,1,9,3,2,7,6]
+-- (1,[4,2,3,7],[8,9,5,6])
+split :: Ord a => [a] -> (a, [a], [a])
+split (x:xs) = foldr op (x, [], []) xs
+    where op x (y, ys, zs) | x <= y    = (x, y:zs, ys)
+                           | otherwise = (y, x:zs, ys)
+
+-- | flattens a __/Heap/__ or heap-like
+flatten :: Ord a => Tree a -> [a]
+flatten Null = []
+flatten (Node x u v) = x:merge (flatten u) (flatten v)
+
+-- |'hSort' is a basic implementation for sorting with O(n^2)
+-- >>> hSort [5,4,8,1,9,3,2,7,6]
+-- [1,2,3,4,5,6,7,8,9]
+hSort :: Ord a => [a] -> [a]
+hSort = flatten . mkheap
