@@ -1,5 +1,5 @@
 import Criterion.Main ( defaultMain, bench, bgroup, whnf )
-import qualified DivConq as DC
+import qualified Sorting as S
 import qualified Random as R
 import Data.List (sort)
 
@@ -10,13 +10,13 @@ main = do
 
   defaultMain [
     bgroup "small"  [ bench "List.sort" $ whnf sort        small
-                    , bench "insertion" $ whnf DC.iSort    small
-                    , bench "quick"     $ whnf DC.qSort    small
-                    , bench "smoothMS"  $ whnf DC.smoothMS small
+                    , bench "insertion" $ whnf S.iSort    small
+                    , bench "quick"     $ whnf S.qSort    small
+                    , bench "smoothMS"  $ whnf S.smoothMS small
                     ],
     bgroup "large"  [ bench "List.sort" $ whnf sort        large
-                    , bench "insertion" $ whnf DC.iSort    large
-                    , bench "quick"     $ whnf DC.qSort    large
-                    , bench "smoothMS"  $ whnf DC.smoothMS large
+                    , bench "insertion" $ whnf S.iSort    large
+                    , bench "quick"     $ whnf S.qSort    large
+                    , bench "smoothMS"  $ whnf S.smoothMS large
                     ]
     ]

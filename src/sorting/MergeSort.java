@@ -2,12 +2,14 @@ import java.util.Stack;
 import java.util.Random;
 
 public class MergeSort {
+  private int n; // number of elements to sort
   private int[] a; // array to sort
   private int[] aux; // auxiliary array for merging
   private int[] vis; //for visualization only
   public Stack<int[]> stack; //for visualization only
   
   public MergeSort(int n) {
+    this.n = n;
     a = new int[n];
     aux = new int[n];
     vis = new int[n]; //for visualization only

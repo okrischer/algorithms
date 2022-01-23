@@ -1,10 +1,10 @@
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 {- |
-Module      : DivConq
-Description : Basic Algorithms, implementing the __/Divide & Conquer/__ pattern
+Module      : Sorting
+Description : Basic sorting algorithms, implementing the __/Divide & Conquer/__ pattern
 Stability   : experimental
 -}
-module DivConq where
+module Sorting where
 
 {- |
 'mSort' is a basic implementation of the __/MergeSort/__ algorithm on lists.

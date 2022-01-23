@@ -1,4 +1,6 @@
-\chapter{Divide-and-Conquer}
+\chapter{Sorting with Divide-and-Conquer}
+
+In this chapter we will explore some basic \emph{sorting} algorithms, all of them employing the \emph{Divide-and-Conquer} strategy for problem solving.
 
 The fundamental idea of \emph{Divide-and-Conquer} algorithms is to divide a given problem into one or more subproblems, each of them beeing smaller than the original problem, to solve each of these subproblems, and then combine the solutions to give a solution to the original problem.
 
@@ -12,7 +14,6 @@ The subproblems are independent of each other (i.e. they do not share the same i
 \item \textbf{worker}: repeatedly invoked procedure, computing the result for a subset of the original problem.
 \end{itemize}
 
-\emph{Divide-and-Conquer} algorithms are often used for \emph{sorting} and \emph{searching}, for which we will discover some examples in this chapter.
 Before going into details of actual implementations, let us first define some desired qualities of sorting algorithms and algorithms in general. Algorithms should be
 \begin{itemize}
 \item \textbf{fast}: this does not only concern the asymptotic runtime, which is relevant for big input sizes, but also means reducing the number of steps for each iteration of the algorithm; 
@@ -21,7 +22,7 @@ Before going into details of actual implementations, let us first define some de
 \item \textbf{compact}: the algorithm should be economical in its use of space as well as running time
 \end{itemize}
 
-We will see that a combination of these qualities for a distinct algorithm is often not easy to accomplish; especially the \emph{compactness} of an algorithm is diffucult to achieve in a pure functional setting.
+We will see that a combination of these qualities for a distinct algorithm is often not easy to accomplish; especially the \emph{compactness} of an algorithm is difficult, if not impossible to achieve in a pure functional setting with \emph{immutable data}.
 
 \section{MergeSort}
 
@@ -213,7 +214,6 @@ int partition(int[] a, int l, int r) {
 }
 
 int choosePivot(int l, int r) {
-    Random rand = new Random();
     return rand.nextInt(r-l) + l;
 }
 \end{javacode}
@@ -360,28 +360,21 @@ void heapify(int[] a, int k, int r) {
 }
 \end{javacode}
 
-
-\section{Counting Inversions}
-
-\section{Strassen's Matrix Multiplication Algorithm}
-
-\section{Closest Pair}
-
 \section{Running the Haskell Code}
 
 \begin{haskellcode}
 
-> import qualified DivConq as DC
+> import qualified Sorting as S
 > import qualified Random as R
 > 
 > main :: IO ()
 > main = do
 >   let ints = R.randInt 10 42 (0, 100)
->   print $ DC.mSort ints
->   print $ DC.bumSort ints
->   print $ DC.smoothMS ints
->   print $ DC.qSort ints
->   print $ DC.iSort ints
->   print $ DC.hSort ints
+>   print $ S.mSort ints
+>   print $ S.bumSort ints
+>   print $ S.smoothMS ints
+>   print $ S.qSort ints
+>   print $ S.iSort ints
+>   print $ S.hSort ints
 
 \end{haskellcode}

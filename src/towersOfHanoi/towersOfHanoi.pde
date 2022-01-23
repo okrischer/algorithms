@@ -2,7 +2,6 @@ import java.util.Stack;
 
 Hanoi hanoi;
 Stack<Move> moves;
-int step = 0;
 
 void setup() {
   size(1000, 400);
@@ -17,6 +16,7 @@ void draw() {
     Move move = moves.pop();
     showMove(move);
   } else {
+    //save("ToH.png");
     noLoop();
   }
 }

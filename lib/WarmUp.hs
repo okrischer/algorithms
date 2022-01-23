@@ -1,4 +1,4 @@
-module GS where
+module WarmUp where
 import Data.Char (ord, chr)
 
 type Bit = Char

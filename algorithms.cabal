@@ -21,8 +21,8 @@ maintainer:         oliver.krischer@gmail.com
 -- category:
 
 library
-    exposed-modules:  GS,
-                      DivConq,
+    exposed-modules:  WarmUp,
+                      Sorting,
                       Random
 
     -- Modules included in this library but not exported.
@@ -42,10 +42,6 @@ executable algorithms
     -- other-extensions:
     build-depends:
         base ^>=4.14.3.0,
-        diagrams-lib,
-        diagrams-svg,
-        colour,
-        criterion,
         algorithms
 
     hs-source-dirs:   src

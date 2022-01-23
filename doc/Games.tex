@@ -196,9 +196,82 @@ Reduce the elements of a row to its \texttt{bitwise-xor} with Nim-Sum:
 >                 putStrLn "error: invalid move!"
 >                 nim board player
 >         else do -- computer player
->             if nimSum board == 0 then nim (move board (stall board 1)) 1
->             else nim (move board (reduce board 1)) 1
+>             if nimSum board == 0
+>                 then nim (move board (stall board 1)) 1
+>                 else nim (move board (reduce board 1)) 1
 
 \end{haskellcode}
 
 The game can now be startet in GHCI with \texttt{<nim initial 1>}.
+
+\section{The Towers of Hanoi}
+
+The \emph{Towers of Hanoi} is a simple game where it is your task to move a stack of disks with varying diameters from one pile to another, using a third pile as a temporary storage.
+
+\begin{figure}[ht]
+\centering
+\includegraphics[width=0.5\textwidth]{../img/ToH.png}
+\caption[Towers of Hanoi]{Snapshot of the `Towers of Hanoi' animation}
+\end{figure}
+
+The game is the \emph{"Hello, world!"} example for solving problems with a \emph{recursive} strategy, so we simply have to include it here, although you may have encountered it before.
+The rules for the game are as follows:
+\begin{enumerate}
+\item only one disk may be moved per turn
+\item only the uppermost disk of a pile may be moved
+\item it's not allowed to place a disk on top of another disk with a smaller diameter.
+\end{enumerate}
+If you try to solve that riddle with more than three disks, you will soon discover that it is not that easy to solve it.
+This is mainly because you repeatedly have to \emph{"destroy"} a well-sorted pile in order to place a bigger disk on an already occupied pile.
+If you try to solve the game computationally, you will presumably fail to find a sequential algorithm which calculates all the needed moves in advance.
+
+The solution is to switch to a \emph{recursive problem solving} strategy, where we only have to think about two problems:
+\begin{itemize}
+\item the \textbf{base case}, where we are solving the problem for a single instance
+\item the \textbf{recursive case}, where we reduce the problem to a smaller problem.
+\end{itemize}
+In our case the solution is simple enough: if we have a starting pile of $n$ disks then we
+\begin{enumerate}
+\item move all disks but the last one ($n-1$ disks) from start to the temporary pile
+\item move the last disk (the biggest disk) from start to the goal
+\item move the $n-1$ disks from the temporary pile to the goal.
+\end{enumerate}
+And that's it! No further redo.
+You may wish to understand how this algorithm works, but there's no need to. Just get acquainted with the recursive pattern and someday you'll apply it without even thinking about it.
+
+\begin{impl}[Towers of Hanoi with Java]
+This implementation uses a java collection named \texttt{Stack}, which is essentially a \emph{linked list} where the last added element will be the first to be given back. Stacks are the prototype for \textbf{LiFo-structures}, which stands for "last in, first out".
+Notice that we are using plain integer values for representing the disks, where the value stands for the diameter of a disk.
+\end{impl}
+
+\begin{javacode}
+import java.util.Stack;
+
+public class Hanoi {
+    private final int numDisks;
+    public final Stack<Integer> towerA = new Stack<>();
+    public final Stack<Integer> towerB = new Stack<>();
+    public final Stack<Integer> towerC = new Stack<>();
+    
+    public Hanoi(int discs) {
+        numDisks = discs;
+        for (int i = discs; i >= 1; i--)
+            towerA.push(i);
+    }
+    
+    private void move(Stack<Integer> start, Stack<Integer> target, 
+                      Stack<Integer> temp, int n) {
+        if (n == 1) {
+            target.push(start.pop());
+        } else {
+            move(start, temp, target, n-1);
+            move(start, target, temp, 1);
+            move(temp, target, start, n-1);
+        }
+    }
+    
+    public void solve() {
+        move(towerA, towerC, towerB, numDisks);
+    }
+}
+\end{javacode}

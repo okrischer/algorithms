@@ -1,3 +1,6 @@
+import java.util.Stack;
+import java.util.Random;
+
 class Range {
   int l, r;
   Range(int left, int right) {
