@@ -66,7 +66,7 @@ The seed for conducting a single experiment is changed for every turn.
 -}
 binomial :: Int -> Int -> Float -> [Int]
 binomial n m p
-    | m == 1    = [c]
+    | m == 1     = [c]
     | otherwise = c : binomial n (m-1) p
     where
     c = length (filter (== True) (bernoulli n m p))

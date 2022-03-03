@@ -211,7 +211,7 @@ The \emph{Towers of Hanoi} is a simple game where it is your task to move a stac
 \begin{figure}[ht]
 \centering
 \includegraphics[width=0.5\textwidth]{../img/ToH.png}
-\caption[Towers of Hanoi]{Snapshot of the `Towers of Hanoi' animation}
+\caption[Towers of Hanoi]{Snapshot of the \emph{Towers of Hanoi} animation}
 \end{figure}
 
 The game is the \emph{"Hello, world!"} example for solving problems with a \emph{recursive} strategy, so we simply have to include it here, although you may have encountered it before.
@@ -240,7 +240,7 @@ And that's it! No further redo.
 You may wish to understand how this algorithm works, but there's no need to. Just get acquainted with the recursive pattern and someday you'll apply it without even thinking about it.
 
 \begin{impl}[Towers of Hanoi with Java]
-This implementation uses a java collection named \texttt{Stack}, which is essentially a \emph{linked list} where the last added element will be the first to be given back. Stacks are the prototype for \textbf{LiFo-structures}, which stands for "last in, first out".
+This implementation uses the java collection \texttt{Stack}, which is essentially an extended \emph{Vector} with a \texttt{push()} and \texttt{pop()} method. Stack is an implementation of an \textbf{LIFO stack}, which stands for "last in, first out".
 Notice that we are using plain integer values for representing the disks, where the value stands for the diameter of a disk.
 \end{impl}
 

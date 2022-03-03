@@ -34,7 +34,7 @@ merge :: Ord a => [a] -> [a] -> [a]
 merge [] ys = ys
 merge xs [] = xs
 merge left@(x:xs) right@(y:ys)
-    | x <= y    = x : merge xs right
+    | x <= y     = x : merge xs right
     | otherwise = y : merge left ys
 
 {- |
@@ -110,6 +110,7 @@ one with elements matching the predicate, the other with all elements that don't
 partition :: (a -> Bool) -> [a] -> ([a], [a])
 partition p = foldr op ([], [])
     where op x (ys, zs) = if p x then (x:ys, zs) else (ys, x:zs)
+
 
 {- |
 'iSort' is a basic implementation of the __/InsertionSort/__ algorithm on lists.

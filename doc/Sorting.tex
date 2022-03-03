@@ -223,7 +223,7 @@ int choosePivot(int l, int r) {
 Comparing \emph{QickSort} with \emph{MergeSort}, we see that they work quite similiar, with one subtle difference:
 in \emph{MergeSort} the main method first calls itself until the input is split into $n$ subsets, and then the worker method merges together the subsets in recursive order.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=0.8\textwidth]{../img/sortAnimation.png}
 \caption[Sorting in Action]{Snapshot of a sorting animation}
@@ -261,7 +261,7 @@ In the following benchmark report we have two groups, the first (the yellow one)
 Our simple \emph{InsertionSort} is the fastest on the small set and even on the large set it's nearly as fast as the build-in library function \texttt{List.sort}.
 \emph{QuickSort} is a little faster than \emph{Smooth MergeSort} on the small set, wherase \emph{MergeSort} catches up on the large set.
 
-\begin{figure}[h]
+\begin{figure}[ht]
 \centering
 \includegraphics[width=1.0\textwidth]{../img/bench_sort.png}
 \caption[Sorting benchmarks]{Benchmarking our sorting algorithms}
