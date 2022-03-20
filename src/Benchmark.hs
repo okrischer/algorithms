@@ -9,13 +9,11 @@ main = do
   let large = R.randInt 1000000 42 (0, 1000000)
 
   defaultMain [
-    bgroup "small"  [ bench "List.sort" $ whnf sort        small
-                    , bench "insertion" $ whnf S.iSort    small
+    bgroup "small"  [ bench "List.sort" $ whnf sort       small
                     , bench "quick"     $ whnf S.qSort    small
                     , bench "smoothMS"  $ whnf S.smoothMS small
                     ],
-    bgroup "large"  [ bench "List.sort" $ whnf sort        large
-                    , bench "insertion" $ whnf S.iSort    large
+    bgroup "large"  [ bench "List.sort" $ whnf sort       large
                     , bench "quick"     $ whnf S.qSort    large
                     , bench "smoothMS"  $ whnf S.smoothMS large
                     ]

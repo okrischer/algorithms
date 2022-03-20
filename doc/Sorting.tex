@@ -14,7 +14,8 @@ The subproblems are independent of each other (i.e. they do not share the same i
 \item \textbf{worker}: repeatedly invoked procedure, computing the result for a subset of the original problem.
 \end{itemize}
 
-Before going into details of actual implementations, let us first define some desired qualities of sorting algorithms and algorithms in general. Algorithms should be
+Before going into details of actual implementations, let us first define some desired qualities of sorting algorithms and algorithms in general.
+Algorithms should be
 \begin{itemize}
 \item \textbf{fast}: this does not only concern the asymptotic runtime, which is relevant for big input sizes, but also means reducing the number of steps for each iteration of the algorithm; 
 \item \textbf{smooth}: the more sorted the input is, the faster the algorithm should perform; in general, if the problem at hand is already solved for the majority of inputs values, the algorithm should be faster;
@@ -240,7 +241,17 @@ For these reasons, even if we consider the additional steps of choosing a random
 
 As we have seen with implementation \ref{impl:qshaskell} (\nameref{impl:qshaskell}), these assumptions do not hold in a functional setting: neither is it possible to perform \emph{in-place-updates} nor can we access an arbitrary element at constant time.
 Here, \emph{MergeSort} is likely to be the better alternative. 
-And for small to midsize problems we can always fall back to \emph{InsertionSort}, which is stable, smooth and fast on linked lists (although its running time is still $\Theta (n^2)$, which matters for big inputs).
+
+\subsection{Greedy Sorting Algorithms with Haskell}
+
+For small to midsize problems in a functional setting we can always fall back to \emph{InsertionSort} and \emph{SelectionSort}, which are stable, smooth and fairly easy to implement.
+They are examples of \textbf{greedy algorithms}, which we will explore in a later chapter.
+
+For now, let us just characterize greedy algorithms as a fusion of two functions: one that selects a \emph{best candidate} from another function that generates \emph{all candidates}, or at least all candidates that may turn out to be best ones.
+
+For sorting, of course, it would not be suitable to generate all possible permutations of a given list ahead of time; instead, we will first generate ordered pairs of elements and combine them into the final output in the second step.
+To do so, for everey element in the list we compare that element to every other element in order to find its correct position.
+Thus, we have to run through the list twice in nested loops, leading to an overall running time of $\Theta (n^2)$.
 
 \begin{impl}[InsertionSort with Haskell]
 \end{impl}
@@ -255,11 +266,29 @@ insert x (y:ys) | x <= y = x:y:ys
                 | otherwise = y : insert x ys
 \end{haskellcode}
 
+\begin{impl}[SelectionSort with Haskell]
+\end{impl}
+
+\begin{haskellcode}
+sSort :: Ord a => [a] -> [a]
+sSort [] = []
+sSort xs = x : sSort ys where (x, ys) = next xs
+
+next :: Ord a => [a] -> (a, [a])
+next [x] = (x, [])
+next (x:xs) | x <= y = (x, xs)
+            | otherwise = (y, x:ys)
+            where (y, ys) = next xs
+\end{haskellcode}
+
+\subsection{Benchmarking the Sorting Algorithms}
+
 Now let's have a look at the grapes of our labour.
 In the following benchmark report we have two groups, the first (the yellow one) shows the results of sorting a small list of 1,000 random integers, the second (blue) one shows the same for a large list with 1,000,000 random integers. All measures are taken from the Haskell versions.
 
-Our simple \emph{InsertionSort} is the fastest on the small set and even on the large set it's nearly as fast as the build-in library function \texttt{List.sort}.
 \emph{QuickSort} is a little faster than \emph{Smooth MergeSort} on the small set, wherase \emph{MergeSort} catches up on the large set.
+Notice that the built-in sorting function \texttt{Data.List.sort} is implemented as a smooth merge sort as well, but it is even more sophisticated in that it splits the input into both ascending runs and and descending runs, taking care to reverse the descending runs.
+It is more than twice as fast as our implementations (observe the logarithmic scale on the time axis). 
 
 \begin{figure}[ht]
 \centering
@@ -375,6 +404,7 @@ void heapify(int[] a, int k, int r) {
 >   print $ S.smoothMS ints
 >   print $ S.qSort ints
 >   print $ S.iSort ints
+>   print $ S.sSort ints
 >   print $ S.hSort ints
 
 \end{haskellcode}
