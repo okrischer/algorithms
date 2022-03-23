@@ -15,7 +15,7 @@ We are going to build the logic for the game \emph{bottom up}, meaning that we b
 
 \begin{impl}[Switch players]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 > import Data.Char ( digitToInt, isDigit )
@@ -25,12 +25,12 @@ We are going to build the logic for the game \emph{bottom up}, meaning that we b
 > next 1 = 2
 > next 2 = 1
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Create the board and check game status]
 Note that we create the board as a single list of integers, each representing the number of elements in the corresponding row. The definition of \texttt{finished} doesn't need to include the parameter \texttt{Board} since this parameter is already given in the signature of this function.
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > type Board = [Int]
 > initial :: Board
@@ -38,12 +38,12 @@ Note that we create the board as a single list of integers, each representing th
 > finished :: Board -> Bool
 > finished = all (== 0)
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Make valid move]
 A move is specified by a row number and the number of items to be removed; the move is valid if the row contains at least this many items.
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > valid :: Board -> (Int, Int) -> Bool
 > valid board (row, num) = board !! (row-1) >= num
@@ -52,11 +52,11 @@ A move is specified by a row number and the number of items to be removed; the m
 > move board (row, num) = [update r n | (r,n) <- zip [1..] board]
 >      where update r n = if r == row then n - num else n
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[IO functions for gameplay]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > putRow :: Int -> Int -> IO ()
 > putRow row num = do putStr (show row)
@@ -83,11 +83,11 @@ A move is specified by a row number and the number of items to be removed; the m
 > newline :: IO ()
 > newline = putChar '\n'
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Create the main game loop]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > nimH2H :: Board -> Int -> IO ()
 > nimH2H board player = do
@@ -111,7 +111,7 @@ A move is specified by a row number and the number of items to be removed; the m
 >             putStrLn "error: invalid move!"
 >             nimH2H board player
 
-\end{haskellcode}
+\end{haskellcode*}
 
 With that, we have a first running version of \emph{nim}, which can be played in GHCI with two human players \emph{head to head}, e.g. \texttt{<nimH2H initial 1>}, starting with player 1.
 Of course, this is only fun if you have a friend to play with, as the game is missing any logic by now. We will take care of this in the next section.
@@ -140,28 +140,28 @@ To give the human player at least a chance to win, we will let him make the firs
 
 \begin{impl}[Step 1: compute the Nim-Sum]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > nimSum :: Board -> Int
 > nimSum = foldr xor 0
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Step 2: make stalling move]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > stall :: Board -> Int -> (Int, Int)
 > stall (x:xs) row
 >     | x > 0 = (row, 1)
 >     | otherwise = stall xs (row+1)
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Steps 3 - 5]
 Reduce the elements of a row to its \texttt{bitwise-xor} with Nim-Sum:
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > reduce :: Board -> Int -> (Int, Int)
 > reduce board row
@@ -170,11 +170,11 @@ Reduce the elements of a row to its \texttt{bitwise-xor} with Nim-Sum:
 >     where x = board !! (row-1)
 >           bxor = xor (nimSum board) x
 
-\end{haskellcode}
+\end{haskellcode*}
 
 \begin{impl}[Adjust the main game loop to allow the computer to make its own choice]
 \end{impl}
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > nim :: Board -> Int -> IO ()
 > nim board player = do
@@ -200,7 +200,7 @@ Reduce the elements of a row to its \texttt{bitwise-xor} with Nim-Sum:
 >                 then nim (move board (stall board 1)) 1
 >                 else nim (move board (reduce board 1)) 1
 
-\end{haskellcode}
+\end{haskellcode*}
 
 The game can now be startet in GHCI with \texttt{<nim initial 1>}.
 

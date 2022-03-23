@@ -1,3 +1,5 @@
+// package games.hanoi;
+
 import java.util.Stack;
 
 // only needed for visualization with processing

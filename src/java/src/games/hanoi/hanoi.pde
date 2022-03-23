@@ -5,10 +5,10 @@ Stack<Move> moves;
 
 void setup() {
   size(1000, 400);
-  hanoi = new Hanoi(4); // max 8 disks for this visualization
+  hanoi = new Hanoi(6); // max 8 disks for this visualization
   hanoi.solve();
   moves = hanoi.moves;
-  frameRate(1);
+  frameRate(3);
 }
 
 void draw() {

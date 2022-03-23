@@ -23,7 +23,8 @@ maintainer:         oliver.krischer@gmail.com
 library
     exposed-modules:  WarmUp,
                       Sorting,
-                      Random
+                      Random,
+                      ExSearch
 
     -- Modules included in this library but not exported.
     -- other-modules:

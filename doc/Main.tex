@@ -6,23 +6,24 @@
 \usepackage{amsthm}
 \usepackage{hyperref}
 \usepackage[backend=biber,style=authoryear]{biblatex}
-\usepackage[section,newfloat=true]{minted}
+\usepackage[chapter,newfloat=true]{minted}
 \addbibresource{algs.bib}
-\numberwithin{equation}{section}
-\newtheorem{defn}{Definition}[section]
-\newtheorem{prop}{Proposition}[section]
-\newtheorem{theo}{Theorem}[section]
-\newtheorem{impl}{Implementation}[section]
-\newtheorem{exer}{Exercise}[section]
+\numberwithin{equation}{chapter}
+\newtheorem{impl}{Implementation}[chapter]
+\newtheorem{defn}{Definition}[chapter]
+\newtheorem{prop}{Proposition}[defn]
+\newtheorem{theo}{Theorem}[defn]
 
 \begin{document}
 
-\definecolor{bgh}{rgb}{0.95,0.95,0.96}
-\definecolor{bgj}{rgb}{0.96,0.95,0.95}
+\definecolor{bgh}{rgb}{0.95,0.95,0.97}
+\definecolor{bgj}{rgb}{0.97,0.95,0.95}
+\definecolor{bgp}{rgb}{0.95,0.96,0.95}
 \usemintedstyle[haskell]{lovelace}
 \usemintedstyle[java]{trac}
 \newminted{java}{bgcolor=bgj}
 \newminted{haskell}{bgcolor=bgh}
+\newminted{prolog}{bgcolor=bgp}
 \hypersetup{hidelinks}
 
 \title{Algorithmic Thinking}
@@ -40,6 +41,7 @@
 \input{WarmUp.tex}
 \input{Games.tex}
 \input{Sorting.tex}
+\input{ExSearch.tex}
 
 \appendix 
 \printbibliography

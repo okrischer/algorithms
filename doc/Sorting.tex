@@ -242,16 +242,18 @@ For these reasons, even if we consider the additional steps of choosing a random
 As we have seen with implementation \ref{impl:qshaskell} (\nameref{impl:qshaskell}), these assumptions do not hold in a functional setting: neither is it possible to perform \emph{in-place-updates} nor can we access an arbitrary element at constant time.
 Here, \emph{MergeSort} is likely to be the better alternative. 
 
-\subsection{Greedy Sorting Algorithms with Haskell}
+\subsection{Excursion: Greedy Sorting Algorithms with Haskell}
 
-For small to midsize problems in a functional setting we can always fall back to \emph{InsertionSort} and \emph{SelectionSort}, which are stable, smooth and fairly easy to implement.
-They are examples of \textbf{greedy algorithms}, which we will explore in a later chapter.
+For small to midsize problems in a functional setting, where we do not want to apply \emph{QuickSort}, we can always fall back to \emph{InsertionSort} and \emph{SelectionSort}, which are stable and smooth and fairly easy to implement.
+They are examples of \textbf{greedy algorithms}, which we will explore in detail in a later chapter.
 
 For now, let us just characterize greedy algorithms as a fusion of two functions: one that selects a \emph{best candidate} from another function that generates \emph{all candidates}, or at least all candidates that may turn out to be best ones.
 
-For sorting, of course, it would not be suitable to generate all possible permutations of a given list ahead of time; instead, we will first generate ordered pairs of elements and combine them into the final output in the second step.
-To do so, for everey element in the list we compare that element to every other element in order to find its correct position.
+For sorting, of course, it would not be suitable to generate all possible permutations of a given list ahead of time; instead, we will compare everey element in the list to every other element in order to find its correct position for the final output.
 Thus, we have to run through the list twice in nested loops, leading to an overall running time of $\Theta (n^2)$.
+
+This is a nice example for \emph{greedy algorithms} in general: instead of generating all possible permutations of the search space, we will exploit certain \emph{monotonicity conditions} about it and then use these to reduce the search space.
+For our current problem of sorting this means that we only generate pairs of elements with the first one being smaller or equal to the second one; thus we are using the monotonous ascending order of an already sorted list.
 
 \begin{impl}[InsertionSort with Haskell]
 \end{impl}
@@ -391,7 +393,7 @@ void heapify(int[] a, int k, int r) {
 
 \section{Running the Haskell Code}
 
-\begin{haskellcode}
+\begin{haskellcode*}{gobble=2}
 
 > import qualified Sorting as S
 > import qualified Random as R
@@ -407,4 +409,4 @@ void heapify(int[] a, int k, int r) {
 >   print $ S.sSort ints
 >   print $ S.hSort ints
 
-\end{haskellcode}
+\end{haskellcode*}

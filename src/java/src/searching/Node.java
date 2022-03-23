@@ -1,3 +1,5 @@
+// package searching;
+
 public class Node<T> implements Comparable<Node<T>> {
   final T state;
   Node<T> parent;

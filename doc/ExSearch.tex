@@ -1,0 +1,169 @@
+\chapter{Exhaustive Search}
+
+Sometimes there seems to be no better approach than to examine every possible candidate in order to find one with a particular property or to show that one exists.
+That, in essence, is exhaustive search.
+Many of the algorithms we have met so far started life as exhaustive search algorithms.
+By exploiting various \emph{monotonicity conditions} they were then transfomed into more efficient alternatives - \emph{greedy, thinning} or \emph{dynamic-programming} algorithms, algorithms whose running times were typically a low-order polynomial in the size of the input.
+
+However, for many problems, even quite simply stated ones, no algorithm with a guaranteed polynomial running time is known.
+For example, there is no known algorithm for determining the factors of a positive integer that takes polynomial time in the number of it digits.
+We well explore a first example of such problems in the following section, known as the n-queens problem.
+
+\section{A First Example: the n-Queens Puzzle}
+The aim of the puzzle is to arrange \emph{n} queens on an $n \times n$ chessboard so that no queen attacks any other. Each queen therefore has to be placed on the board in a different row, column, and diagonal from any other queen.
+
+The first two \emph{constraints} imply that any solution is necessarily a permutation of the numbers 1 to \emph{n} in which the \emph{j}th element is the number of the column in which the queen in row \emph{j} is placed.
+For example, for the 8-queens problem there are 92 solutions, of which one is \texttt{1,5,8,6,3,7,2,4}. The queen in the first row is in column 1, the queen in the second row is in column 5, and so on.
+
+The third constraint, having no two queens on the same diagonal, can be checked by exploiting the fact that in a grid diagonal cells are computed by adding or subtracting a constant factor from both the \emph{x-} and the \emph{y-coordinate} for any given cell.
+Representing the position of a queen with its coordinates $(r, c)$ we can therefore define a safe position for another queen $(r', c')$ by ensuring that $abs(c' - c) \neq r' - r$.
+An equivalent definition would be: $r + c \neq r' + c'$ (right diagonal) \emph{and} $r - c \neq r' - c '$ (left diagonal).
+
+\subsection{A First Solution with Haskell}
+
+\begin{impl}[Naive solution to the n-queens problem with Haskell]
+We are implementing the diagonal safety condition by checking that the (absolute) difference of the x-coordinates of two queens is not equal to the difference of their y-coordinates, thus ensuring that we have no constant factor as described above.
+Notice that we use `q' to denote the column of the queen, which makes the code more succinct.
+Also note that the first two constraints of having no queens in the same row and column are ensured by only generating possible solutions from discrete permutations of the numbers 1 to n. 
+\end{impl}
+
+\begin{haskellcode}
+safe :: [Int] -> Bool
+safe qs = check (zip [1..] qs)
+
+check :: (Eq a, Num a) => [(a, a)] -> Bool
+check [] = True
+check ((r,q):rqs) =
+    and [abs (q' - q) /= r' - r | (r', q') <- rqs] && check rqs
+
+queens :: Int -> [[Int]]
+queens n = filter safe perms
+    where perms = permutations [1..n]
+\end{haskellcode}
+
+Calling that function for the 4-queens problem yields:
+\begin{verbatim}
+ghci> queens 4
+[[2,4,1,3],[3,1,4,2]]
+\end{verbatim}
+listing the only two possible configurations for placing 4 queens safely on a $4 \times 4$ chessboard.
+
+Generating possible solutions from a permutation of the numbers 1 to \emph{n} does not only ensure the first two constraints but reduces also the number of possible solutions from $n^n$ to $n!$, even before any filtering or further checking is done. For $n=8$ this reduces the search space from 16,777,216 possibilities to 40,320 possible candidates, from which after the diagonal safety test only 92 remain as a valid solution.
+
+But, after all, the running time of the naive algorithm is not good: generating the permutations takes $\Theta(n \times n!)$ steps and each safety test takes $\Theta(n^2)$ steps, so the full algorithm takes $\Theta(n^2 \times n!)$ steps because the safety test has to applied to $n!$ permutations. We can do better than that, and we will, but only after having a look at two other implementations in different languages and programming paradigms, namely logic programming in \emph{prolog} and imperative programming in \emph{java}.
+
+\subsection{A First Solution with Prolog}
+
+As we have seen above, this particular search problem can be solved by generating possible candidates and then checking if some given constraints do hold for any of the candidates.
+In fact, algorithms of this kind are often called \textbf{constraint satisfaction} algorithms.
+There are several programming environments available which are specialized in solving that kind of problems, providing algorithms for automatically checking if the given constraints are satisfied for a large number of variables, sometimes called \textbf{SAT-solvers}.
+
+The programming language \emph{Prolog} provides such an environment, which - although not beeing a fully fledged SAT-solver - allows to formulate and check contraints in a concice and comprehensive manner without having to worry about implementing complex algorithms.
+Prolog evaluates given logical statements and searches for solutions with a built-in three-step process:
+\begin{itemize}
+  \item \emph{unification}: the process of substituting variables with values according to the given facts and rules;
+  \item \emph{backchaining}: if unification needs to evaluate further facts for compound rules, this is done automatically by chaining them together;
+  \item \emph{backtracking}: if unification fails for the assigned values, prolog steps back recursively and assigns different matching values to the variables until a valid solution is found or the process finally fails.
+\end{itemize}
+
+We do not need to fully understand how prolog works in detail to digest the following example for the n-queens problem; it is sufficient to acknowledge that all the needed information is given by logical facts, rules, and constraints. Prolog will happily evaluate them within its three-step process when given a query and it will report the solution, if one exists.
+
+\begin{impl}[Naive solution to the n-queens problem with Prolog]
+With this implementation we are only solving the 4-queens problem, not because prolog couldn't handle bigger problems, but only because the choosen representation of facts would become somewhat tedious to maintain for many more variables.
+So we kept it short and simple.
+Observe, that we have a uniqueness constraint, ensuring that we have different values for all columns, which corresponds to the permutation constraint of the haskell version.
+This also ensures the safety of queens in rows and columns, so we don't need extra constraints for that.
+The diagonal safety constraints check against the positioning in diagonals.
+Notice that they are defined in terms of `captures', so we need to negate them with {\mintinline{prolog}{\+}} in the main solution rule.
+Also notice that there is no procedural logic included, no recursion and no backtracking as prolog will handle this automatically with its built-in process.
+\end{impl}
+
+\begin{prologcode}
+% solve the 4-queens problem.
+solution(C1,C2,C3,C4) :-
+  uniq(C1,C2,C3,C4),
+  \+ cap(2,C2,1,C1),
+  \+ cap(3,C3,1,C1), \+ cap(3,C3,2,C2),
+  \+ cap(4,C4,1,C1), \+ cap(4,C4,2,C2), \+ cap(4,C4,3,C3).
+
+% columns
+col(1). col(2). col(3). col(4).
+
+% unique constraint
+uniq(C1,C2,C3,C4) :- col(C1), col(C2), col(C3), col(C4),
+    C1 \= C2, C1 \= C3, C1 \= C4, C2 \= C3, C2 \= C4, C3 \= C4.
+
+% safety constraints
+cap(R1,C1,R2,C2) :- R1-C1 =:= R2-C2.    % capture on left diagonal    
+cap(R1,C1,R2,C2) :- R1+C1 =:= R2+C2.    % capture on right diagonal
+\end{prologcode}
+
+Evaluating that program in a prolog sessions yields the following results:
+\begin{verbatim}
+?- solution(C1,C2,C3,C4).
+C1 = 2, C2 = 4, C3 = 1, C4 = 3 ;
+C1 = 3, C2 = 1, C3 = 4, C4 = 2 ;
+false.
+\end{verbatim}
+and we see that it finds the same two configurations as the haskell version.
+
+\subsection{A First Solution with Java}
+
+\begin{javacode}
+public class Queens {
+  public static boolean isSafe(int[] q, int n) {
+    for (int i = 0; i < n; i++) {
+      if (q[i] == q[n]) return false;         // same column
+      if (q[i] - q[n] == n - i) return false; // same major diagonal
+      if (q[n] - q[i] == n - i) return false; // same minor diagonal
+    }
+    return true;
+  }
+
+  public static void printQueens(int[] q) {
+    int n = q.length;
+    for (int i = 0; i < n; i++) {
+      for (int j = 0; j < n; j++) {
+        if (q[i] == j) System.out.print("Q ");
+        else           System.out.print("* ");
+      }
+      System.out.println();
+    }
+    System.out.println();
+  }
+
+  public static void queens(int n) {
+    int[] q = new int[n];
+    queens(q, 0);
+  }
+
+  public static void queens(int[] q, int k) {
+    int n = q.length;
+    if (k == n) printQueens(q);
+    else {
+      for (int i = 0; i < n; i++) {
+        q[k] = i;
+        if (isSafe(q, k)) queens(q, k + 1);
+      }
+    }
+  }
+
+  public static void main(String[] args) {
+    int n = Integer.parseInt(args[0]);
+    queens(n);
+  }
+}
+\end{javacode}
+
+\section{Running the Haskell Code}
+
+\begin{haskellcode*}{gobble=2}
+
+> import ExSearch
+> main :: IO ()
+> main = do
+>   let qs = queens 8
+>   print $ length qs
+>   print qs
+
+\end{haskellcode*}

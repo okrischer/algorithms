@@ -1,3 +1,5 @@
+// package games.hanoi;
+
 import java.util.Stack;
 
 public class Hanoi {
