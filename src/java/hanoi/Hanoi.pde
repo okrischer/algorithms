@@ -1,5 +1,3 @@
-// package games.hanoi;
-
 import java.util.Stack;
 
 public class Hanoi {
@@ -31,4 +29,16 @@ public class Hanoi {
         moves.push(new Move(towerA, towerB, towerC)); // visualization
         move(towerA, towerC, towerB, numDisks);
     }
+}
+
+public class Move {
+  Stack<Integer> towerA = new Stack<>();
+  Stack<Integer> towerB = new Stack<>();
+  Stack<Integer> towerC = new Stack<>();
+  
+  public Move(Stack<Integer> A, Stack<Integer> B, Stack<Integer> C) {
+    for (int d : A) towerA.push(d);
+    for (int d : B) towerB.push(d);
+    for (int d : C) towerC.push(d);
+  }
 }

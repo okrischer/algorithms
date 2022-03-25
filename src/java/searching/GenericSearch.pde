@@ -1,5 +1,3 @@
-// package searching;
-
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.Stack;
@@ -18,12 +16,12 @@ import java.util.function.ToDoubleFunction;
 public class GenericSearch {
 
   // for visualization only
-  public static Set exploredDFS = new HashSet<>();
-  public static Set exploredBFS = new HashSet<>();
-  public static Map exploredAstar = new HashMap<>();
+  public Set exploredDFS   = new HashSet<>();
+  public Set exploredBFS   = new HashSet<>();
+  public Map exploredAstar = new HashMap<>();
 
   // linear search
-  public static <T extends Comparable<T>> boolean ls(List<T> list, T other) {
+  public <T extends Comparable<T>> boolean ls(List<T> list, T other) {
     for (T item : list) {
       if (item.compareTo(other) == 0) return true;
     }
@@ -31,7 +29,7 @@ public class GenericSearch {
   }
   
   // binary search
-  public static <T extends Comparable<T>> boolean bs(List<T> list, T other) {
+  public <T extends Comparable<T>> boolean bs(List<T> list, T other) {
     int low = 0;
     int high = list.size() - 1;
     while (low <= high) {
@@ -45,7 +43,7 @@ public class GenericSearch {
   }
 
   // depth first search
-  public static <T> Node<T> dfs(T initial, Predicate<T> goalTest,
+  public <T> Node<T> dfs(T initial, Predicate<T> goalTest,
                 Function<T, List<T>> successors) {
 
     Stack<Node<T>> frontier = new Stack<>();
@@ -72,7 +70,7 @@ public class GenericSearch {
   }
   
   // breadth first search
-  public static <T> Node<T> bfs(T initial, Predicate<T> goalTest,
+  public <T> Node<T> bfs(T initial, Predicate<T> goalTest,
                 Function<T, List<T>> successors) {
 
     Queue<Node<T>> frontier = new LinkedList<>();
@@ -99,14 +97,14 @@ public class GenericSearch {
   }
 
   // A* search with heuristic and cost function
-  public static <T> Node<T> astar(T initial, Predicate<T> goalTest,
+  public <T> Node<T> astar(T initial, Predicate<T> goalTest,
                 Function<T, List<T>> successors, ToDoubleFunction<T> heuristic) {
 
     PriorityQueue<Node<T>> frontier = new PriorityQueue<>();
     frontier.offer(new Node<T>(initial, null, 0.0, heuristic.applyAsDouble(initial)));
     Map<T, Double> explored = new HashMap<>();
     exploredAstar = explored; // visualization only
-    explored.put(initial, 0.0);
+    explored.put(initial, 0.0d);
 
     while (!frontier.isEmpty()) {
       Node<T> currentNode = frontier.poll();
@@ -124,8 +122,9 @@ public class GenericSearch {
     }
     return null;
   }
+  
   // path to goal
-  public static <T> List<T> nodeToPath(Node<T> node) {
+  public <T> List<T> nodeToPath(Node<T> node) {
     List<T> path = new ArrayList<>();
     path.add(node.state);
     while (node.parent != null) {
@@ -134,5 +133,4 @@ public class GenericSearch {
     }
     return path;
   }
-
 }

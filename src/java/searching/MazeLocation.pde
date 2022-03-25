@@ -1,5 +1,3 @@
-// package searching;
-
 public class MazeLocation {
   public final int row;
   public final int col;

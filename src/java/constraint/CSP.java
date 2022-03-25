@@ -1,4 +1,4 @@
-package searching;
+package constraint;
 
 import java.util.ArrayList;
 import java.util.HashMap;

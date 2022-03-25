@@ -109,6 +109,21 @@ and we see that it finds the same two configurations as the haskell version.
 
 \subsection{A First Solution with Java}
 
+For solving this problem in an imperative style we use \emph{backtracking}, a recursive technique to generate solutions and (within the same step) to check if they are valid.
+If they are not, the algorithm steps back from the generated candiadte and doesn't progress that solution any further.
+Stepping back means that we are returning to the parent stack and choose a new value for this stage of evaluation.
+This could lead to a situation in that, if we do not find a allowed configuration for a value in a solution, the algorithm steps back to the first value in the sequence and begins the search from scratch.
+Backtracking is especially powerful when working with mutable data structures as arrays, in which we are repeatedly updating the links (pointers) to values of intermediate data structures, so that they eventually point to acceptable solutions.
+This technique of \emph{dancing links} is described in full coverage in \autocite{taocp19}.
+
+\begin{impl}[Backtracking with Java, taken from \autocite{introcs17}]
+Again, we have a constraint check (method \texttt{isSafe}), ensuring that queens are placed correctly, and an additional pretty-print method for displaying a simple ascii graphic of the board.
+The solution is recorded as an array of length n for the columns of the queens, having row numbers as indices as with the haskell solution.
+The main work is done in the \texttt{generate} method, which generates in principle all possible combinations of rows and columns ($n^n$).
+But with backtracking the constraint checking occurs during the generation of candidates (and not only after generating all of them), thus the exploration of further candidates is cut of in case of failing the safety test.
+This leads to approxemately the same number of steps as our previous solutions.
+\end{impl}
+
 \begin{javacode}
 public class Queens {
   public static boolean isSafe(int[] q, int n) {
@@ -134,16 +149,16 @@ public class Queens {
 
   public static void queens(int n) {
     int[] q = new int[n];
-    queens(q, 0);
+    generate(q, 0);
   }
 
-  public static void queens(int[] q, int k) {
+  public static void generate(int[] q, int k) {
     int n = q.length;
     if (k == n) printQueens(q);
     else {
       for (int i = 0; i < n; i++) {
         q[k] = i;
-        if (isSafe(q, k)) queens(q, k + 1);
+        if (isSafe(q, k)) generate(q, k + 1);
       }
     }
   }
@@ -154,6 +169,20 @@ public class Queens {
   }
 }
 \end{javacode}
+
+Calling queens(4) prints the generated solutions:
+\begin{verbatim}
+  * Q * * 
+  * * * Q 
+  Q * * * 
+  * * Q * 
+  
+  * * Q * 
+  Q * * * 
+  * * * Q 
+  * Q * *
+\end{verbatim}
+which are again identical, except that they are in reverse order, as well as the row numbers are.
 
 \section{Running the Haskell Code}
 

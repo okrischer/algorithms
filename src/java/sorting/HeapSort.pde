@@ -1,5 +1,3 @@
-package sorting;
-
 import java.util.Random;
 
 public class HeapSort {
@@ -47,12 +45,4 @@ public class HeapSort {
         }
         return sb.toString();
     }
-
-    public static void main(String[] args) {
-        HeapSort hs = new HeapSort(100);
-        System.out.println(hs);
-        hs.hSort(hs.a, 99);
-        System.out.println(hs);
-    }
-
 }

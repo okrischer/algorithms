@@ -1,25 +1,20 @@
-// package searching;
-
-import java.util.List;
 import java.util.Arrays;
-import java.util.ArrayList;
 import java.util.Random;
 
+public enum Cell {
+  EMPTY(" "), BLOCKED("X"), START("S"), GOAL("G"), PATH("*");
+  private final String code;
+
+  private Cell (String c) {
+    code = c;
+  }
+  public String toString() {
+    return code;
+  }
+}
+  
 public class Maze {
   
-  // internal enum
-  public enum Cell {
-    EMPTY(" "), BLOCKED("X"), START("S"), GOAL("G"), PATH("*");
-    private final String code;
-
-    private Cell (String c) {
-      code = c;
-    }
-    public String toString() {
-      return code;
-    }
-  }
-
   // members of Maze
   public final int rows, cols;
   public final MazeLocation start, goal;
@@ -112,20 +107,5 @@ public class Maze {
       sb.append(System.lineSeparator());
     }
     return sb.toString();
-  }
-
-  public static void main(String[] args) {
-    Maze m = new Maze();
-    System.out.println(m);
-    Node<MazeLocation> solution =
-      GenericSearch.dfs(m.start, m::goalTest, m::successors);
-    if (solution == null) {
-      System.out.println("no solution found");
-    } else {
-      List<MazeLocation> path = GenericSearch.nodeToPath(solution);
-      m.mark(path);
-      System.out.println(m);
-      m.clear(path);
-    }
   }
 }

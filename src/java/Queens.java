@@ -1,5 +1,3 @@
-package searching;
-
 public class Queens {
   public static boolean isSafe(int[] q, int n) {
     for (int i = 0; i < n; i++) {
@@ -24,16 +22,16 @@ public class Queens {
 
   public static void queens(int n) {
     int[] q = new int[n];
-    queens(q, 0);
+    generate(q, 0);
   }
 
-  public static void queens(int[] q, int k) {
+  public static void generate(int[] q, int k) {
     int n = q.length;
     if (k == n) printQueens(q);
     else {
       for (int i = 0; i < n; i++) {
         q[k] = i;
-        if (isSafe(q, k)) queens(q, k + 1);
+        if (isSafe(q, k)) generate(q, k + 1);
       }
     }
   }

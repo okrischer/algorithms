@@ -244,7 +244,7 @@ Here, \emph{MergeSort} is likely to be the better alternative.
 
 \subsection{Excursion: Greedy Sorting Algorithms with Haskell}
 
-For small to midsize problems in a functional setting, where we do not want to apply \emph{QuickSort}, we can always fall back to \emph{InsertionSort} and \emph{SelectionSort}, which are stable and smooth and fairly easy to implement.
+For small to midsize problems in a functional setting, we can always fall back to \emph{InsertionSort} and \emph{SelectionSort}, which are stable and smooth and fairly easy to implement.
 They are examples of \textbf{greedy algorithms}, which we will explore in detail in a later chapter.
 
 For now, let us just characterize greedy algorithms as a fusion of two functions: one that selects a \emph{best candidate} from another function that generates \emph{all candidates}, or at least all candidates that may turn out to be best ones.
@@ -268,20 +268,23 @@ insert x (y:ys) | x <= y = x:y:ys
                 | otherwise = y : insert x ys
 \end{haskellcode}
 
-\begin{impl}[SelectionSort with Haskell]
+\begin{impl}[SelectionSort with Java]
 \end{impl}
 
-\begin{haskellcode}
-sSort :: Ord a => [a] -> [a]
-sSort [] = []
-sSort xs = x : sSort ys where (x, ys) = next xs
+\begin{javacode}
+void sSort(int[] a) {
+  for (int i = 0; i < n; i++) {
+    for (int j = i + 1; j < n; j++) {
+      if (a[j] < a[i]) swap(a, i, j);
+    }
+  }
 
-next :: Ord a => [a] -> (a, [a])
-next [x] = (x, [])
-next (x:xs) | x <= y = (x, xs)
-            | otherwise = (y, x:ys)
-            where (y, ys) = next xs
-\end{haskellcode}
+void swap(int[] a, int i, int j) {
+  int t = a[i];
+  a[i] = a[j];
+  a[j] = t;
+}
+\end{javacode}
 
 \subsection{Benchmarking the Sorting Algorithms}
 

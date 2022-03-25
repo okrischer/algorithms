@@ -1,5 +1,3 @@
-// package searching;
-
 public class Node<T> implements Comparable<Node<T>> {
   final T state;
   Node<T> parent;
@@ -23,5 +21,4 @@ public class Node<T> implements Comparable<Node<T>> {
     Double theirs = other.cost + other.heuristic;
     return mine.compareTo(theirs);
   }
-
-} // end of Node
+}

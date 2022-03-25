@@ -5,12 +5,12 @@ import java.util.Map;
 import java.util.HashMap;
 
 Maze maze;
+GenericSearch gs = new GenericSearch();
 Set exploredDFS = new HashSet<>();
 Set exploredBFS = new HashSet<>();
 Map exploredAstar = new HashMap<>();
 
 int cp;
-boolean paused = true;
 
 void setup() {
   size(1240, 440);
@@ -20,40 +20,40 @@ void setup() {
   maze = new Maze(20, 20, start, goal, 0.3);
   cp = 20;
   
-  Node<MazeLocation> dfs = GenericSearch.dfs(maze.start,
+  Node<MazeLocation> dfs = gs.dfs(maze.start,
     maze::goalTest, maze::successors);
-  exploredDFS = GenericSearch.exploredDFS;
+  exploredDFS = gs.exploredDFS;
     
   if (dfs == null) {
     println("no solution found with dfs");
   } else {
-    List<MazeLocation> path = GenericSearch.nodeToPath(dfs);
+    List<MazeLocation> path = gs.nodeToPath(dfs);
     maze.mark(path);
     drawDFS();
     maze.clear(path);
   }
   
-  Node<MazeLocation> bfs = GenericSearch.bfs(maze.start,
+  Node<MazeLocation> bfs = gs.bfs(maze.start,
     maze::goalTest, maze::successors);
-  exploredBFS = GenericSearch.exploredBFS;
+  exploredBFS = gs.exploredBFS;
     
   if (bfs == null) {
     println("no solution found with bfs");
   } else {
-    List<MazeLocation> path = GenericSearch.nodeToPath(bfs);
+    List<MazeLocation> path = gs.nodeToPath(bfs);
     maze.mark(path);
     drawBFS();
     maze.clear(path);
   }
 
-  Node<MazeLocation> astar = GenericSearch.astar(maze.start,
+  Node<MazeLocation> astar = gs.astar(maze.start,
     maze::goalTest, maze::successors, maze::manhattanDistance);
-  exploredAstar = GenericSearch.exploredAstar;
+  exploredAstar = gs.exploredAstar;
     
   if (astar == null) {
     println("no solution found with A* heuristic");
   } else {
-    List<MazeLocation> path = GenericSearch.nodeToPath(astar);
+    List<MazeLocation> path = gs.nodeToPath(astar);
     maze.mark(path);
     drawASTAR();
     maze.clear(path);
@@ -136,8 +136,4 @@ void setFill(int r, int c) {
     default:
       fill (100, 100, 0);
   }
-}
-
-void keyPressed() {
-  if (key == ' ') paused = !paused;
 }
